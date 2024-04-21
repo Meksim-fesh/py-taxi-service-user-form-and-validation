@@ -29,6 +29,7 @@ def index(request) -> HttpResponse:
 
     return render(request, "taxi/index.html", context=context)
 
+
 @login_required
 def car_assign_current_driver(request) -> HttpResponse:
     car_id = request.POST.get("car_id")
@@ -37,6 +38,7 @@ def car_assign_current_driver(request) -> HttpResponse:
     car.drivers.add(user)
     car.save()
     return redirect(f"/cars/{car_id}/")
+
 
 @login_required
 def car_delete_current_driver(request) -> HttpResponse:
