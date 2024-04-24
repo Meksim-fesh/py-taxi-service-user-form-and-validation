@@ -30,26 +30,6 @@ def index(request) -> HttpResponse:
     return render(request, "taxi/index.html", context=context)
 
 
-@login_required
-def car_assign_current_driver(request) -> HttpResponse:
-    car_id = request.POST.get("car_id")
-    car = Car.objects.get(id=car_id)
-    user = request.user
-    car.drivers.add(user)
-    car.save()
-    return redirect(f"/cars/{car_id}/")
-
-
-@login_required
-def car_delete_current_driver(request) -> HttpResponse:
-    car_id = request.POST.get("car_id")
-    car = Car.objects.get(id=car_id)
-    user = request.user
-    car.drivers.remove(user)
-    car.save()
-    return redirect(f"/cars/{car_id}/")
-
-
 class ManufacturerListView(LoginRequiredMixin, generic.ListView):
     model = Manufacturer
     context_object_name = "manufacturer_list"
@@ -94,6 +74,28 @@ class CarUpdateView(LoginRequiredMixin, generic.UpdateView):
     model = Car
     form_class = CarForm
     success_url = reverse_lazy("taxi:car-list")
+
+
+class CarAssignCurrentDriver(LoginRequiredMixin, generic.UpdateView):
+
+    def post(self, request, *args, **kwargs) -> HttpResponse:
+        car_id = request.POST.get("car_id")
+        car = Car.objects.get(id=car_id)
+        user = request.user
+        car.drivers.add(user)
+        car.save()
+        return redirect(f"/cars/{car_id}/")
+
+
+class CarDeleteCurrentDriver(LoginRequiredMixin, generic.DeleteView):
+
+    def post(self, request, *args, **kwargs) -> HttpResponse:
+        car_id = request.POST.get("car_id")
+        car = Car.objects.get(id=car_id)
+        user = request.user
+        car.drivers.remove(user)
+        car.save()
+        return redirect(f"/cars/{car_id}/")
 
 
 class CarDeleteView(LoginRequiredMixin, generic.DeleteView):
