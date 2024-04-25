@@ -7,19 +7,16 @@
   <p>Manufacturer: ({{ car.manufacturer.name }}, {{ car.manufacturer.country }})</p>
   <h1>
     Drivers
-    {% if user not in car.drivers.all %}
-    <form action="{% url 'taxi:car-assign-driver' %}" method="post" class="link-to-page">
+    <form action="{% url 'taxi:car-assign-or-delete-current-driver' %}" method="post" class="link-to-page">
       {% csrf_token %}
-      <input type="number" name="car_id" id="car_id" value="{{ car.id }}" hidden>       
-      <input type="submit" value="Assign me to this car" class="btn btn-success">
+      <input type="number" name="car_id" id="car_id" value="{{ car.id }}" hidden>
+      {% if user not in car.drivers.all %}
+        <input type="submit" value="Assign me to this car" class="btn btn-success">
+      {% else %}
+        <input type="submit" value="Delete me from this car" class="btn btn-danger">
+      {% endif %}
     </form>
-  {% else %}
-    <form action="{% url 'taxi:car-delete-driver' %}" method="post" class="link-to-page">
-      {% csrf_token %}
-      <input type="number" name="car_id" id="car_id" value="{{ car.id }}" hidden>        
-      <input type="submit" value="Delete me from this car" class="btn btn-danger">
-    </form>
-  {% endif %}
+
   </h1>
   <hr>
   <ul>
